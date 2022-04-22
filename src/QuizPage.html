@@ -1,10 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Connect Four</title>
-  </head>
-  <body>
-    <div class="board"></div>
-    <script src="main.js" type="module"></script>
-  </body>
-</html>
+<head>
+  <link rel="stylesheet" href="UserStyle1.css">
+  <script src="userMain.js"></script>
+</head>
+<body onload="onLoad()">
+  <div id="Top_left_name_text">
+    <h1 id="topLeftNameStuff"></h1>
+    <h2 id= "Team_scores"></h2>
+  </div>
+  <div id="overlay">
+    <div id="overlay_Text">
+      <h1>Incorrect Answer!</h1>
+      <p>You will be able to answer again in 5 seconds</p>
+    </div>
+  </div>
+  <div id="Team_selection_over">
+    <div id="Pre_Quiz_Form">
+      <label for="fname">Input name then choose team:</label><br>
+      <input type="Text" id="Name" placeholder="Name"><br>
+      <div id="Team_Buttons">
+        <button onclick="hide_setTeam_overlay(1)" class="team_button" id="button_1">Team 1</button><br>
+        <button onclick="hide_setTeam_overlay(2)" class="team_button" id="button_2">Team 2</button>
+      </div>
+    </div>
+  </div>
+  <div id="Quiz">
+    <div id = "score">0</div>
+    <h1 id="Question_Text">Question</h1>
+    <h2 id="Correct_Answer">Input question:</h2>
+    <button class="Answer_Button_0" onclick="quizButtonClick(0)" class="unanswered">Question 1</button><br>
+    <button id="Answer_Button_1" onclick="quizButtonClick(1)" class="unanswered">Question 2</button><br>
+    <button id="Answer_Button_2" onclick="quizButtonClick(2)" class="unanswered">Question 3</button><br>
+    <button id="Answer_Button_3" onclick="quizButtonClick(3)" class="unanswered">Question 4</button><br>
+  </div>
+</body>

@@ -1,18 +1,31 @@
+from numpy import number
 import websockets
 import asyncio
+import json
 
-async def handler(websocket):
-    while True:
-        try:
-            message = await websocket.recv()
-        except websockets.ConnectionClosedOK:
-            break
-        print(message)
+currentClientNumber = 0
 
-async def main():
-    async with websockets.serve(handler, "", 8001):
-        await asyncio.Future()  # run forever
+async def basicResponse(websocket, path):
+    name = await websocket.recv()
+    try:
+        data = json.loads(name)
+        print(data)
+        type = data["type"]
+        
+        if type == "buttonPress":
+            print(f"Button {data['buttonID']} was pressed at {data['time']}")
+        if type== "initialConnection":
+            global currentClientNumber
+            currentClientNumber += 1
+            print(f"Client {currentClientNumber} connected")
+            await websocket.send(json.dumps({"type": "initialConnection", "clientNumber": currentClientNumber}))
+        
+        await websocket.send(json.dumps({"type":"Confirmation","confirmed":True}))
+        
+    except:
+        pass
+    
 
-
-if __name__ == "__main__":
-    asyncio.run(main())
+start_server = websockets.serve(basicResponse, "localhost", 5678)
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()

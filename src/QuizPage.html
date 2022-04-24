@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head onload="onLoad()">
   <link rel="stylesheet" href="UserStyle1.css">
   <script src="userMain.js"></script>
 </head>
-<body onload="onLoad()">
+<body onload=>
   <div id="Top_left_name_text">
-    <h1 id="topLeftNameStuff"></h1>
+    <h1 id="userName"></h1>
+    <h1 id="userID"></h1>
     <h2 id= "Team_scores"></h2>
   </div>
   <div id="overlay">
@@ -29,7 +30,7 @@
     <div id = "score">0</div>
     <h1 id="Question_Text">Question</h1>
     <h2 id="Correct_Answer">Input question:</h2>
-    <button class="Answer_Button_0" onclick="quizButtonClick(0)" class="unanswered">Question 1</button><br>
+    <button id="Answer_Button_0" onclick="quizButtonClick(0)" class="unanswered">Question 1</button><br>
     <button id="Answer_Button_1" onclick="quizButtonClick(1)" class="unanswered">Question 2</button><br>
     <button id="Answer_Button_2" onclick="quizButtonClick(2)" class="unanswered">Question 3</button><br>
     <button id="Answer_Button_3" onclick="quizButtonClick(3)" class="unanswered">Question 4</button><br>

@@ -1,6 +1,9 @@
 var websocket;
 var userName = "";
 var userID = "";
+var userTeamID;
+
+
 window.addEventListener("DOMContentLoaded", () => {
     websocket = new WebSocket("ws://localhost:5678/");
   
@@ -32,4 +35,10 @@ function stopWithText(text,time) {
     setTimeout(() => {
         document.getElementById("overlay").style.display = "none";
     },time)
+}
+
+function hide_setTeam_overlay(newTeamID) {
+    userTeamID = newTeamID;
+    document.getElementById("overlay").style.display = "none";
+    websocket.send(JSON.stringify({"type":"setTeam", "teamID":userTeamID, "time":Date.now()}));
 }

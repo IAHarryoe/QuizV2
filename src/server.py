@@ -44,6 +44,10 @@ async def handler(websocket, path):
             
             if type == "setTeam":
                 print(f"Client {data['userName']} set team to {data['team']} at {data['time']}")
+                if data['userName'] in allClientNames.keys():
+                    allClientNames[data['userName']] = data['team']
+                else:
+                    allClientNames[data['userID']] = {"name":data['userName'],"team":data['team'],"timeCreated":data['time']}
             
             if type == "buttonPress":
                 print(f"Button {data['buttonID']} was pressed at {data['time']} by {data['userName']}")

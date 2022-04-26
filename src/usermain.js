@@ -1,44 +1,94 @@
 var websocket;
 var userName = "";
-var userID = "";
+var userID;
 var userTeamID;
-
+var currentQuestion = 0;
+var score = 0;
 
 window.addEventListener("DOMContentLoaded", () => {
-    websocket = new WebSocket("ws://localhost:5678/");
-  
-
+    websocket = new WebSocket("ws://"+ location.hostname+":8001/");
 
     websocket.onopen = () => {
         console.log("Connected to server");
         websocket.send(JSON.stringify({"type":"initialConnection", "time":Date.now()}));
+        getUpdateQuestions();
+        return false;
     };
     websocket.onmessage = ({ data }) => {
         console.log(data);
-        if (data["type"] == "initialConnection") {
-            dataJSON = JSON.parse(data);
+        dataJSON = JSON.parse(data);
+        if (dataJSON["type"] == "initialConnection") {
             userID = dataJSON["userID"];
-            document.getElementById("userName").innerHTML = userName;
+            document.getElementById("userNameSpot").innerHTML = userName;
             document.getElementById("userID").innerHTML = userID;
         }
+        if (dataJSON["type"] == "questionResponse") {
+            if (dataJSON["correct"]) {
+                score += 1;
+                document.getElementById("score").innerHTML = score;
+                getUpdateQuestions();
+            }else {stopWithText("Wrong answer. Try again in 5 seconds.",5000);}
+
+        }
+        if (dataJSON["type"] == "getQuestions") {
+            updateQuestions(dataJSON);
+        }
+
+        if (dataJSON["type"] == "stopWithText") {
+            stopWithText(dataJSON["text"],dataJSON["timeLength"]);
+        }
+        return false;
     };  
 });
 
+function getUpdateQuestions() {
+    websocket.send(JSON.stringify({"type":"getQuestions", 
+    "time":Date.now(),
+    "userID":userID,
+    "userName":userName,}));
+}
+
+function updateQuestions(data) {
+    dataJSON = data;
+    currentQuestion = dataJSON["questionID"];
+    document.getElementById("Question_Text").innerHTML = dataJSON["question"];
+    for (i = 0; i < (dataJSON["answers"].length); i++) {
+        document.getElementById("Answer_Button_" + i).innerHTML = dataJSON["answers"][i];
+        document.getElementById("Answer_Button_" + i).hidden = false;
+    }
+    for (i = (dataJSON["answers"].length); i < 4; i++) {
+        document.getElementById("Answer_Button_" + i).hidden = true;
+    }
+}
+
 function quizButtonClick(buttonID) {
     console.log("Button " + buttonID + " was pressed")
-    websocket.send(JSON.stringify({"type":"buttonPress", "buttonID":buttonID, "time":Date.now()}));
+    outData = {"type":"buttonPress",
+    "buttonID":buttonID,
+    "time":Date.now(),
+    "userID":userID,
+    "userName":userName,
+    "teamID":userTeamID,
+    "currentQuestion":currentQuestion};
+    websocket.send(JSON.stringify(outData));
 }
 
 function stopWithText(text,time) {
     document.getElementById("overlay").style.display = "block";
-    document.getElementById("overlayText").innerHTML = text;
+    document.getElementById("overlay_Text").innerHTML = text;
     setTimeout(() => {
         document.getElementById("overlay").style.display = "none";
-    },time)
+    },time);
 }
 
 function hide_setTeam_overlay(newTeamID) {
     userTeamID = newTeamID;
-    document.getElementById("overlay").style.display = "none";
-    websocket.send(JSON.stringify({"type":"setTeam", "teamID":userTeamID, "time":Date.now()}));
+    userName = document.getElementById("userName").value;
+    document.getElementById("Team_selection_over").style.display = "none";
+    websocket.send(JSON.stringify({
+    "type":"setTeam",
+    "userID":userID,
+    "teamID":userTeamID,
+    "userName":userName, 
+    "time":Date.now()}));
 }

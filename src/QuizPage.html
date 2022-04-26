@@ -4,9 +4,9 @@
   <link rel="stylesheet" href="UserStyle1.css">
   <script src="userMain.js"></script>
 </head>
-<body onload=>
+<body>
   <div id="Top_left_name_text">
-    <h1 id="userName"></h1>
+    <h1 id="userNameSpot"></h1>
     <h1 id="userID"></h1>
     <h2 id= "Team_scores"></h2>
   </div>
@@ -19,7 +19,7 @@
   <div id="Team_selection_over">
     <div id="Pre_Quiz_Form">
       <label for="fname">Input name then choose team:</label><br>
-      <input type="Text" id="Name" placeholder="Name"><br>
+      <input type="Text" id="userName" placeholder="Name"><br>
       <div id="Team_Buttons">
         <button onclick="hide_setTeam_overlay(0)" class="team_button" id="button_1">Team 1</button><br>
         <button onclick="hide_setTeam_overlay(1)" class="team_button" id="button_2">Team 2</button>

@@ -37,6 +37,10 @@ window.addEventListener("DOMContentLoaded", () => {
         if (dataJSON["type"] == "stopWithText") {
             stopWithText(dataJSON["text"],dataJSON["timeLength"]);
         }
+        if (dataJSON["type"] == "scoreUpdate") {
+            document.getElementById("team_score_0").innerHTML = dataJSON["teamScores"][0];
+            document.getElementById("team_score_1").innerHTML = dataJSON["teamScores"][1];
+        }
         return false;
     };  
 });

@@ -9,6 +9,7 @@ currentUserIDNumber = 0
 allClients = []
 allClientNames = {}
 quizPath = "quizFiles\commas.json"
+teamScores = [0,0]
 
 #sets the working directory to the directory of the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -20,9 +21,15 @@ print(os.getcwd())
 
 connected = {}
 
+async def brodcastToAll(websockets, message):
+    for client in websockets:
+        asyncio.get_event_loop().create_task(client["ws"].send(message))
+
+
 async def handler(websocket, path):
     global allClientNames
     global quizPath
+    global teamScores
     while True:
         name = await websocket.recv()
         
@@ -43,7 +50,7 @@ async def handler(websocket, path):
                 await websocket.send(json.dumps({"type": "initialConnection", "userID": currentUserIDNumber}))
             
             if type == "setTeam":
-                print(f"Client {data['userName']} set team to {data['team']} at {data['time']}")
+                print(f"Client {data['userName']} set team to {data['teamID']} at {data['time']}")
                 if data['userName'] in allClientNames.keys():
                     allClientNames[data['userName']] = data['team']
                 else:
@@ -52,13 +59,18 @@ async def handler(websocket, path):
             if type == "buttonPress":
                 print(f"Button {data['buttonID']} was pressed at {data['time']} by {data['userName']}")
                 questionIsCorrect = quizData[data["currentQuestion"]]["correctAnswerID"] == data["buttonID"]
-                
                 responseData = {
                     "type": "questionResponse",
                     "correct": questionIsCorrect,
                     "time": time.time()
                 }
                 await websocket.send(json.dumps(responseData))
+                if questionIsCorrect:
+                    global team1Score
+                    teamScores[quizData['teamID']] += 1
+                    print(f"Team {quizData['teamID']} scored a point")
+                    await brodcastToAll(allClients, json.dumps({"type": "scoreUpdate", "teamScores": teamScores}))
+                    
                 
                 
             if type == "getQuestions":
@@ -81,14 +93,15 @@ async def handler(websocket, path):
                     "timeLength": data["timeLength"]
                 }
                 responseData = json.dumps(responseData)
-                for client in allClients:
-                    await client["ws"].send(responseData)
+                await brodcastToAll(allClients, responseData)
             
             await websocket.send(json.dumps({"type":"Confirmation","confirmed":True}))
                 
-        except:
-            pass
-        
+        except websockets.exceptions.ConnectionClosedError:
+            print(f"Client {currentUserIDNumber} disconnected")
+            allClients.remove({"ws": websocket, "id": currentUserIDNumber})
+            print(allClients)
+            break
 
 
 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript">
+        allQuestions = [];
+        function submitQuestion() {
+            var question = document.getElementById("questionInput").value;
+            var answers = [];
+            var correctAnswer = document.getElementById("answer1").value;
+            var correctAnswerID = 0;
+            for (var i = 1; i <= 4; i++) {
+                console.log("answer" + i);
+                if (document.getElementById("answer" + i).value != "") {
+                    answers.push(document.getElementById("answer" + i).value);
+                }
+            }
+
+            allQuestions.push({
+                question: question,
+                answers: answers,
+                correctAnswer: correctAnswer,
+                correctAnswerID: correctAnswerID
+            });
+            document.getElementById("output").innerHTML = JSON.stringify(allQuestions);
+        }
+    </script>
+    <style>
+        #output {
+            width: 50%;
+            height: 20%;
+            background-color: #f1f1f1;
+            position: absolute;
+            top: 70%;
+            /*center the output div on the x axis*/
+            left: 25%;
+            z-index: 100;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="Input_area">
+        <input type="text" id="questionInput" placeholder="Question"><br>
+        <input type="text" id="answer1" placeholder="Correct Answer"><br>
+        <input type="text" id="answer2" placeholder="Answer 2"><br>
+        <input type="text" id="answer3" placeholder="Answer 3"><br>
+        <input type="text" id="answer4" placeholder="Answer 4"><br>
+        <button onclick="submitQuestion()">Submit Question</button>
+    </div>
+    <div id="output">
+        This is a test, it is very long text that will be displayed in the output div. <br>
+        This is a test, it is very long text that will be displayed in the output div. <br>
+        This is a test, it is very long text that will be displayed in the output div. <br>
+        This is a test, it is very long text that will be displayed in the output div. <br>
+        This is a test, it is very long text that will be displayed in the output div. <br>
+        This is a test, it is very long text that will be displayed in the output div. <br>
+
+    </div>
+</body>
+
+</html>
